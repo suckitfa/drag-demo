@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/reset.min.css">
+    <style>
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background-color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 盒子的父级参照物是body -->
+    <div class="box" id="box"></div>
+    <script>
+        function move(ev) {
+            // 随时获取当前鼠标的信息，计算盒子的最新位置
+            let curL = ev.pageX - this.startX + this.startL,
+                curT = ev.pageY - this.startY + this.startT;
+            let HTML = document.documentElement,
+                minL = 0,
+                minT = 0,
+                maxL = HTML.clientWidth - this.offsetWidth,
+                maxT = HTML.clientHeight - this.offsetHeight;
+
+            // 边界判断
+            curL = curL < minL ? minL : (curL > maxL ? maxL : curL);
+            curT = curT < minT ? minT : (curT > maxT ? maxT : curT);
+            this.style.left = curL + "px";
+            this.style.top = curT + "px";
+
+        }
+
+        function down(ev) {
+            // 存储鼠标起始位置的信息和盒子的起始位置存储在盒子的自定义属性上
+            this.startX = ev.pageX;
+            this.startY = ev.pageY;
+            this.startL = this.offsetLeft;
+            this.startT = this.offsetTop;
+            // 按下后 删除绑定时间
+            document.onmousemove = move.bind(this);
+            document.onmouseup = up.bind(this);
+            // this.setCapture(); // chrome不支持
+
+        }
+
+        function up(ev) {
+            // 鼠标抬起，将move绑定的方法移除
+            document.onmousemove = null;
+            document.onmouseup = null;
+            // this.releaseCapture();
+        }
+        // 将值存在自定义属性上
+        box.onmousedown = down;
+    </script>
+</body>
+
+</html>
